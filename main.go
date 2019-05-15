@@ -29,5 +29,9 @@ func main() {
 		fmt.Printf("%v\n", err)
 	}
 	fmt.Printf("Token: %v\nUser: %v\n", bot.Token, bot.self)
-
+	res, err := bot.getUpdate(0, 100, 30)
+	if err != nil {
+		log.Fatalf("Get Update method return err: %v\n", err)
+	}
+	fmt.Printf("Update result: %v\n", res)
 }

@@ -64,3 +64,11 @@ type BotResponse struct {
 	ErrorCode   int                    `json:"error_code"`
 	Parameters  *BotResponseParameters `json:"parametrs"`
 }
+
+type Update struct {
+	UpdateId          int      `json:"update_id"`
+	Msg               *Message `json:"message"`
+	EditedMsg         *Message `json:"edited_message"`
+	ChannelPost       *Message `json:"channel_post"`
+	EditedChannelPost *Message `json:"edited_channel_post"`
+}

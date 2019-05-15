@@ -79,3 +79,24 @@ func (bot *TBot) debugLog(context string, params url.Values, message interface{}
 		log.Printf("%s resp: %+v\n", context, message)
 	}
 }
+
+func (bot *TBot) getUpdate(offest int, limit int, timeout int) ([]Update, error) {
+	params := url.Values{}
+	params.Add("offset", string(offest))
+	params.Add("limit", string(limit))
+	params.Add("timeout", string(timeout))
+	res, err := bot.MakeRequest("getUpdates", params)
+	if err != nil {
+		return []Update{}, err
+	}
+	var u []Update
+	err = json.Unmarshal(res.Result, &u)
+	if err != nil {
+		return []Update{}, err
+	}
+	return u, nil
+}
+
+func (bot *TBot) getDefaultUpdate() {
+
+}
