@@ -1,6 +1,9 @@
 package main
 
-import "encoding/json"
+import (
+	"encoding/json"
+	"fmt"
+)
 
 type User struct {
 	Id        int64  `json:"id"`
@@ -71,4 +74,11 @@ type Update struct {
 	EditedMsg         *Message `json:"edited_message"`
 	ChannelPost       *Message `json:"channel_post"`
 	EditedChannelPost *Message `json:"edited_channel_post"`
+}
+
+func (t *Update) Print() {
+	fmt.Printf(
+		"UpdateID: %v,\nMsg: %v,\nEditedMsg: %v,\nChannelPost: %v,\nEditedChannelPost: %v\n",
+		t.UpdateId, t.Msg, t.EditedMsg, t.ChannelPost, t.EditedChannelPost,
+	)
 }

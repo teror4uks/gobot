@@ -6,22 +6,27 @@ import (
 	"log"
 	"net/http"
 	"net/url"
+	"strconv"
+	"time"
 )
 
 type TBot struct {
+	// Telegram bot struct
 	Token  string `json:"token"`
 	Debug  bool   `json:"debug"`
 	Buffer int    `json:"buffer"`
 
-	self   User
-	client *http.Client
+	closeChannel chan interface{}
+	self         User
+	client       *http.Client
 }
 
 func NewBotApi(token string, client *http.Client) (*TBot, error) {
 	bot := &TBot{
-		Token:  token,
-		client: client,
-		Buffer: 100,
+		Token:        token,
+		client:       client,
+		Buffer:       100,
+		closeChannel: make(chan interface{}),
 	}
 
 	user, err := bot.getMe()
@@ -80,11 +85,24 @@ func (bot *TBot) debugLog(context string, params url.Values, message interface{}
 	}
 }
 
-func (bot *TBot) getUpdate(offest int, limit int, timeout int) ([]Update, error) {
+func (bot *TBot) getUpdate(config UpdateConfig) ([]Update, error) {
 	params := url.Values{}
-	params.Add("offset", string(offest))
-	params.Add("limit", string(limit))
-	params.Add("timeout", string(timeout))
+	if config.limit > 0 {
+		params.Add("limit", strconv.Itoa(config.limit))
+	} else {
+		params.Add("limit", strconv.Itoa(10))
+	}
+	if config.offset != 0 {
+		params.Add("offset", strconv.Itoa(config.offset))
+	} else {
+		params.Add("offset", strconv.Itoa(0))
+	}
+	if config.timeout > 0 {
+		params.Add("timeout", strconv.Itoa(config.timeout))
+	} else {
+		params.Add("timeout", strconv.Itoa(30))
+	}
+
 	res, err := bot.MakeRequest("getUpdates", params)
 	if err != nil {
 		return []Update{}, err
@@ -97,6 +115,43 @@ func (bot *TBot) getUpdate(offest int, limit int, timeout int) ([]Update, error)
 	return u, nil
 }
 
-func (bot *TBot) getDefaultUpdate() {
+func (bot *TBot) getUpdatesChan(config *UpdateConfig) (chan Update, error) {
+	updates := make(chan Update, bot.Buffer)
 
+	go func() {
+		for {
+
+			select {
+			case <-bot.closeChannel:
+				return
+			default:
+			}
+			fmt.Print("Getting updates...\n")
+			fmt.Printf("Config: %v\n", config)
+			upds, err := bot.getUpdate(*config)
+			if err != nil {
+				fmt.Printf("Ooooops something wrong... Wait few seconds\nOriginal Error: %v\n", err)
+				time.Sleep(time.Second * 3)
+				continue
+			}
+			for _, u := range upds {
+				if u.UpdateId >= config.offset {
+					config.offset = u.UpdateId + 1
+					updates <- u
+				} else {
+					fmt.Print("No updates, sleeping 3 seconds...\n")
+					time.Sleep(time.Second * 3)
+				}
+			}
+		}
+	}()
+
+	return updates, nil
+}
+
+func (bot *TBot) gettingUpdates(config UpdateConfig) {
+	updates, _ := bot.getUpdatesChan(&config)
+	for u := range updates {
+		u.Print()
+	}
 }
