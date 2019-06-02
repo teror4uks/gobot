@@ -47,6 +47,10 @@ type Message struct {
 	CaptionEntities      []*MessageEntity `json:"caption_entities"`
 }
 
+func (m *Message) String() string {
+	return fmt.Sprintf("Message ID: %v\nFrom: %v\nChat: %v\nText: %v\n", m.ID, m.From, m.Chat, m.Text)
+}
+
 type MessageEntity struct {
 	Type   string `json:"type"`
 	Offset int    `json:"offset"`
@@ -76,9 +80,9 @@ type Update struct {
 	EditedChannelPost *Message `json:"edited_channel_post"`
 }
 
-func (t *Update) Print() {
-	fmt.Printf(
-		"UpdateID: %v,\nMsg: %v,\nEditedMsg: %v,\nChannelPost: %v,\nEditedChannelPost: %v\n",
+func (t *Update) String() string {
+	return fmt.Sprintf(
+		"UpdateID: %v\nMsg: %v\nEditedMsg: %v\nChannelPost: %v\nEditedChannelPost: %v\n",
 		t.UpdateID, t.Msg, t.EditedMsg, t.ChannelPost, t.EditedChannelPost,
 	)
 }

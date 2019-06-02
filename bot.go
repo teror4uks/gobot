@@ -152,6 +152,6 @@ func (bot *TBot) getUpdatesChan(config *UpdateConfig) (chan Update, error) {
 func (bot *TBot) gettingUpdates(config UpdateConfig) {
 	updates, _ := bot.getUpdatesChan(&config)
 	for u := range updates {
-		u.Print()
+		fmt.Println(&u)
 	}
 }
