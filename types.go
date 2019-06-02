@@ -6,7 +6,7 @@ import (
 )
 
 type User struct {
-	Id        int64  `json:"id"`
+	ID        int64  `json:"id"`
 	IsBot     bool   `json:"is_bot"`
 	FirstName string `json:"first_name"`
 	LastName  string `json:"last_name"`
@@ -15,7 +15,7 @@ type User struct {
 }
 
 type Chat struct {
-	Id                  int      `json:"id"`
+	ID                  int      `json:"id"`
 	Type                string   `json:"type"`
 	Title               string   `json:"title"`
 	UserName            string   `json:"username"`
@@ -34,13 +34,13 @@ func (c *Chat) IsPrivate() bool {
 }
 
 type Message struct {
-	Id                   int64            `json:"id"`
+	ID                   int64            `json:"id"`
 	From                 *User            `json:"from"`
 	Date                 int64            `json:"date"`
 	Chat                 *Chat            `json:"chat"`
 	ForwardFrom          *User            `json:"forward_from"`
 	ForwardFromChar      *Chat            `json:"forward_from_chat"`
-	ForwardFromMessageId int64            `json:"forward_from_message_id"`
+	ForwardFromMessageID int64            `json:"forward_from_message_id"`
 	AutorSignature       string           `json:"author_signature"`
 	Text                 string           `json:"text"`
 	Entities             []*MessageEntity `json:"entities"`
@@ -51,13 +51,13 @@ type MessageEntity struct {
 	Type   string `json:"type"`
 	Offset int    `json:"offset"`
 	Length int    `json:"length"`
-	Url    string `json:"url"`
+	URL    string `json:"url"`
 	Self   *User  `json:"user"`
 }
 
 type BotResponseParameters struct {
-	migrate_to_chat_id int64
-	retry_after        int
+	migrateToChatID int64
+	retryAfter      int
 }
 
 type BotResponse struct {
@@ -69,7 +69,7 @@ type BotResponse struct {
 }
 
 type Update struct {
-	UpdateId          int      `json:"update_id"`
+	UpdateID          int      `json:"update_id"`
 	Msg               *Message `json:"message"`
 	EditedMsg         *Message `json:"edited_message"`
 	ChannelPost       *Message `json:"channel_post"`
@@ -79,6 +79,6 @@ type Update struct {
 func (t *Update) Print() {
 	fmt.Printf(
 		"UpdateID: %v,\nMsg: %v,\nEditedMsg: %v,\nChannelPost: %v,\nEditedChannelPost: %v\n",
-		t.UpdateId, t.Msg, t.EditedMsg, t.ChannelPost, t.EditedChannelPost,
+		t.UpdateID, t.Msg, t.EditedMsg, t.ChannelPost, t.EditedChannelPost,
 	)
 }

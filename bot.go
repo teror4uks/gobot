@@ -135,8 +135,8 @@ func (bot *TBot) getUpdatesChan(config *UpdateConfig) (chan Update, error) {
 				continue
 			}
 			for _, u := range upds {
-				if u.UpdateId >= config.offset {
-					config.offset = u.UpdateId + 1
+				if u.UpdateID != config.offset {
+					config.offset = u.UpdateID
 					updates <- u
 				} else {
 					fmt.Print("No updates, sleeping 3 seconds...\n")
