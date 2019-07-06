@@ -120,7 +120,6 @@ func (bot *TBot) getUpdatesChan(config *UpdateConfig) (chan Update, error) {
 
 	go func() {
 		for {
-
 			select {
 			case <-bot.closeChannel:
 				return
@@ -138,6 +137,13 @@ func (bot *TBot) getUpdatesChan(config *UpdateConfig) (chan Update, error) {
 				if u.UpdateID != config.offset {
 					config.offset = u.UpdateID
 					updates <- u
+					// for debug
+					sendMsgConf := SendMessageConfig{chatID: u.Msg.Chat.ID, text: "Got it!"}
+					_, err = bot.sendMessage(sendMsgConf)
+					if err != nil {
+						fmt.Printf("Message not sended! Error: %v\n", err)
+					}
+					///
 				} else {
 					fmt.Print("No updates, sleeping 3 seconds...\n")
 					time.Sleep(time.Second * 3)
@@ -147,6 +153,29 @@ func (bot *TBot) getUpdatesChan(config *UpdateConfig) (chan Update, error) {
 	}()
 
 	return updates, nil
+}
+
+func (bot *TBot) sendMessage(config SendMessageConfig) (Message, error) {
+	params := url.Values{}
+	params.Add("chat_id", strconv.Itoa(config.chatID))
+	params.Add("text", config.text)
+	params.Add("parse_mode", "Markdown")
+	switch {
+	case config.disableNotification == true:
+		params.Add("disable_notification", strconv.FormatBool(true))
+	case config.disableWebPagePreview == true:
+		params.Add("disable_web_page_preview", strconv.FormatBool(true))
+	}
+	res, err := bot.MakeRequest("sendMessage", params)
+
+	if err != nil {
+		return Message{}, err
+	}
+
+	var m Message
+	err = json.Unmarshal(res.Result, &m)
+
+	return m, nil
 }
 
 func (bot *TBot) gettingUpdates(config UpdateConfig) {

@@ -33,8 +33,15 @@ func (c *Chat) IsPrivate() bool {
 	return c.Type == "private"
 }
 
+func (c *Chat) String() string {
+	return fmt.Sprintf(
+		"===========Chat info:===========\nID: %v\nType: %v\nTitle: %v\nUserName: %v\nFirstName: %v\nLastName: %v\n==============================\n",
+		c.ID, c.Type, c.Title, c.UserName, c.FirstName, c.LastName,
+	)
+}
+
 type Message struct {
-	ID                   int64            `json:"id"`
+	ID                   int64            `json:"message_id"`
 	From                 *User            `json:"from"`
 	Date                 int64            `json:"date"`
 	Chat                 *Chat            `json:"chat"`
@@ -48,7 +55,10 @@ type Message struct {
 }
 
 func (m *Message) String() string {
-	return fmt.Sprintf("Message ID: %v\nFrom: %v\nChat: %v\nText: %v\n", m.ID, m.From, m.Chat, m.Text)
+	return fmt.Sprintf(
+		"=============Message info=============:\nID: %v\nFrom: %v\nText: %v\n%v\n==============================\n",
+		m.ID, m.From, m.Text, m.Chat,
+	)
 }
 
 type MessageEntity struct {
@@ -82,7 +92,7 @@ type Update struct {
 
 func (t *Update) String() string {
 	return fmt.Sprintf(
-		"UpdateID: %v\nMsg: %v\nEditedMsg: %v\nChannelPost: %v\nEditedChannelPost: %v\n",
-		t.UpdateID, t.Msg, t.EditedMsg, t.ChannelPost, t.EditedChannelPost,
+		"===============Update info=============:\nUpdateID: %v\nEditedMsg: %v\nChannelPost: %v\nEditedChannelPost: %v\n%v\n==============================\n",
+		t.UpdateID, t.EditedMsg, t.ChannelPost, t.EditedChannelPost, t.Msg,
 	)
 }
