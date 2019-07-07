@@ -137,13 +137,6 @@ func (bot *TBot) getUpdatesChan(config *UpdateConfig) (chan Update, error) {
 				if u.UpdateID != config.offset {
 					config.offset = u.UpdateID
 					updates <- u
-					// for debug
-					sendMsgConf := SendMessageConfig{chatID: u.Msg.Chat.ID, text: "Got it!"}
-					_, err = bot.sendMessage(sendMsgConf)
-					if err != nil {
-						fmt.Printf("Message not sended! Error: %v\n", err)
-					}
-					///
 				} else {
 					fmt.Print("No updates, sleeping 3 seconds...\n")
 					time.Sleep(time.Second * 3)
@@ -153,6 +146,30 @@ func (bot *TBot) getUpdatesChan(config *UpdateConfig) (chan Update, error) {
 	}()
 
 	return updates, nil
+}
+
+func (bot *TBot) sendMessageChan() (chan Update, error) {
+	sendMessagesChannel := make(chan Update, bot.Buffer)
+
+	go func() {
+		for {
+			select {
+			case <-bot.closeChannel:
+				return
+			case s := <-sendMessagesChannel:
+				sendMsgConf := SendMessageConfig{chatID: s.Msg.Chat.ID, text: fmt.Sprintf("Got it! Original mmessage: %s", s.Msg.)}
+				_, err := bot.sendMessage(sendMsgConf)
+				if err != nil {
+					fmt.Printf("Message not sended! Error: %v\n", err)
+					time.Sleep(time.Second * 3)
+				}
+			default:
+				fmt.Print("Nothing send, sleepting 1 seconds...\n")
+				time.Sleep(time.Second * 1)
+			}
+		}
+	}()
+	return sendMessagesChannel, nil
 }
 
 func (bot *TBot) sendMessage(config SendMessageConfig) (Message, error) {
@@ -180,7 +197,8 @@ func (bot *TBot) sendMessage(config SendMessageConfig) (Message, error) {
 
 func (bot *TBot) gettingUpdates(config UpdateConfig) {
 	updates, _ := bot.getUpdatesChan(&config)
+	sendMessages, _ := bot.sendMessageChan()
 	for u := range updates {
-		fmt.Println(&u)
+		sendMessages <- u
 	}
 }
