@@ -157,7 +157,7 @@ func (bot *TBot) sendMessageChan() (chan Update, error) {
 			case <-bot.closeChannel:
 				return
 			case s := <-sendMessagesChannel:
-				sendMsgConf := SendMessageConfig{chatID: s.Msg.Chat.ID, text: fmt.Sprintf("Got it! Original mmessage: %s", s.Msg.)}
+				sendMsgConf := SendMessageConfig{chatID: s.Msg.Chat.ID, text: fmt.Sprintf("Got it! Original mmessage: %s", s.Msg.Text)}
 				_, err := bot.sendMessage(sendMsgConf)
 				if err != nil {
 					fmt.Printf("Message not sended! Error: %v\n", err)
