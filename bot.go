@@ -160,7 +160,7 @@ func (bot *TBot) sendMessageChan() (chan Update, error) {
 				sendMsgConf := SendMessageConfig{chatID: s.Msg.Chat.ID, text: fmt.Sprintf("Got it! Original mmessage: %s", s.Msg.Text)}
 				_, err := bot.sendMessage(sendMsgConf)
 				if err != nil {
-					fmt.Printf("Message not sended! Error: %v\n", err)
+					fmt.Printf("Message not sent! Error: %v\n", err)
 					time.Sleep(time.Second * 3)
 				}
 			default:
