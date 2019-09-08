@@ -2,8 +2,6 @@ package main
 
 import (
 	"fmt"
-	"log"
-	"net/http"
 	_ "net/http"
 	_ "net/http/pprof"
 )
@@ -52,10 +50,4 @@ func testTrReq() {
 	fmt.Printf("Res -> %s\n", res.Result)
 	fmt.Printf("ARGS -> %s\n", res.Arguments)
 
-}
-
-func pprofile() {
-	go func() {
-		log.Println(http.ListenAndServe("localhost:6060", nil))
-	}()
 }

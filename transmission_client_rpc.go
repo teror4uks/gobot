@@ -33,7 +33,7 @@ type TransmissionError struct {
 }
 
 func (e *TransmissionError) Error() string {
-	return fmt.Sprintf("Transmission Error: Code=%s, Detail=%s\n", e.Code, e.Detail)
+	return fmt.Sprintf("Transmission Error: Code=%d, Detail=%s\n", e.Code, e.Detail)
 }
 
 // NewTrClient constructor for Transmission Client
